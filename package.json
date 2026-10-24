@@ -1,0 +1,13 @@
+{
+  "name": "discord-streaming-badge-farming",
+  "version": "0.0.1",
+  "description": "Automated streaming for Discord badge farming extension",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --outfile=dist/bundle.js --format=iife --target=es2022"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  }
+}
