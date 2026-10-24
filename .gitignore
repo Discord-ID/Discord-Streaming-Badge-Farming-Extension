@@ -1,6 +1,5 @@
 # Chrome Extension Build & Metadata
 _metadata/
-dist/
 *.crx
 *.pem
 *.zip
