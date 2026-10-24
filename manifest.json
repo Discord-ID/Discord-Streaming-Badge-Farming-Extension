@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Discord Streaming Badge Farming",
+  "version": "0.0.1",
+  "description": "Automated streaming for Discord badge farming extension",
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  },
+  "permissions": [
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "host_permissions": [
+    "https://discord.com/*",
+    "https://canary.discord.com/*",
+    "https://ptb.discord.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://discord.com/channels/*",
+        "https://canary.discord.com/channels/*",
+        "https://ptb.discord.com/channels/*"
+      ],
+      "js": [
+        "bridge.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://discord.com/channels/*",
+        "https://canary.discord.com/channels/*",
+        "https://ptb.discord.com/channels/*"
+      ],
+      "js": [
+        "dist/bundle.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/videostream.mp4",
+        "assets/icon.png",
+        "assets/stream-badge.png"
+      ],
+      "matches": [
+        "https://discord.com/*",
+        "https://canary.discord.com/*",
+        "https://ptb.discord.com/*"
+      ]
+    }
+  ]
+}
