@@ -45,7 +45,30 @@
         "https://ptb.discord.com/channels/*"
       ],
       "js": [
-        "dist/bundle.js"
+        "src/constants/dispatches.js",
+        "src/constants/media.js",
+        "src/config.js",
+        "src/discord/webpack.js",
+        "src/discord/restapi.js",
+        "src/discord/dispatches.js",
+        "src/discord/stores.js",
+        "src/discord/navigation.js",
+        "src/discord/actions.js",
+        "src/discord/streams.js",
+        "src/discord/voiceChannels.js",
+        "src/discord/userAccess.js",
+        "src/media/video.js",
+        "src/media/audiomux.js",
+        "src/media/hook.js",
+        "src/automation/watcher.js",
+        "src/automation/runner.js",
+        "src/ui/icons.js",
+        "src/ui/styles.js",
+        "src/ui/widget.js",
+        "src/ui/checkerModal.js",
+        "src/ui/modal.js",
+        "src/ui/index.js",
+        "src/index.js"
       ],
       "run_at": "document_start",
       "world": "MAIN"

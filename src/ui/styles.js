@@ -1,4 +1,7 @@
-export const uiStyles = `
+(() => {
+  const DS = (window.DiscordStreamer = window.DiscordStreamer || {});
+
+  DS.uiStyles = `
 :host {
   color: #f2f3f5;
   font-size: 14px;
@@ -916,3 +919,4 @@ a {
   box-shadow: 0 4px 12px rgba(138, 30, 37, 0.5);
 }
 `;
+})();

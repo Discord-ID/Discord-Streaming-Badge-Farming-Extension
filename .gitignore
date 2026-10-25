@@ -4,31 +4,12 @@ _metadata/
 *.pem
 *.zip
 
-# Dependencies & Package definitions
-node_modules/
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-
-# Build artifacts & caches
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.esbuild/
-*.tsbuildinfo
-
 # OS & Editor generated files
 .DS_Store
 Thumbs.db
 Desktop.ini
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sublime-workspace
-*.sublime-project
 
 # Temporary files
 *.tmp

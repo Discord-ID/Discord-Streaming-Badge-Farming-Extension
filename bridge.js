@@ -1,6 +1,18 @@
 (function () {
   'use strict';
   try {
+    if (typeof Boolean.prototype.includes !== 'function') {
+      Object.defineProperty(Boolean.prototype, 'includes', {
+        value: function () {
+          return false;
+        },
+        writable: true,
+        configurable: true,
+      });
+    }
+  } catch {}
+
+  try {
     const videoUrl = chrome.runtime.getURL('assets/videostream.mp4');
     document.documentElement.dataset.discordVideoUrl = videoUrl;
 
