@@ -3,13 +3,10 @@
 
   let cachedReq = null;
 
-  function isI18nProxy(target) {
+  function isValidModule(target) {
     if (!target || typeof target !== 'object') return false;
-    try {
-      return target.__discord_anti_i18n_probe__ !== undefined;
-    } catch {
-      return false;
-    }
+    if ('$$baseObject' in target || '$$loader' in target) return false;
+    return true;
   }
 
   function getWebpackRequire() {
@@ -55,31 +52,28 @@
 
     if (req.c) {
       for (const mod of Object.values(req.c)) {
-        if (!mod?.exports) continue;
-        const exports = mod.exports;
+        try {
+          if (!mod?.exports) continue;
+          const exports = mod.exports;
 
-        if (!isI18nProxy(exports) && filter(exports)) return exports;
+          if (isValidModule(exports) && filter(exports)) return exports;
 
-        const def = exports?.default;
-        if (def && !isI18nProxy(def) && filter(def)) return def;
+          const def = exports?.default;
+          if (isValidModule(def) && filter(def)) return def;
 
-        if (typeof exports === 'object') {
-          if (exports.Z && !isI18nProxy(exports.Z) && filter(exports.Z)) return exports.Z;
-          if (exports.ZP && !isI18nProxy(exports.ZP) && filter(exports.ZP)) return exports.ZP;
-          if (exports.Ay && !isI18nProxy(exports.Ay) && filter(exports.Ay)) return exports.Ay;
-          if (exports.A && !isI18nProxy(exports.A) && filter(exports.A)) return exports.A;
+          if (typeof exports === 'object') {
+            const namedCandidates = [exports.Z, exports.ZP, exports.Ay, exports.A];
+            for (const cand of namedCandidates) {
+              if (isValidModule(cand) && filter(cand)) return cand;
+            }
 
-          for (const sub of Object.values(exports)) {
-            if (
-              sub &&
-              (typeof sub === 'object' || typeof sub === 'function') &&
-              !isI18nProxy(sub) &&
-              filter(sub)
-            ) {
-              return sub;
+            for (const sub of Object.values(exports)) {
+              if (isValidModule(sub) && filter(sub)) {
+                return sub;
+              }
             }
           }
-        }
+        } catch {}
       }
     }
 
@@ -88,7 +82,7 @@
         try {
           if (filter(fn)) {
             const res = req(id);
-            if (res && !isI18nProxy(res)) {
+            if (isValidModule(res)) {
               return res;
             }
           }
@@ -101,12 +95,11 @@
 
   function findModuleByProps(...props) {
     return findModule((mod) => {
-      if (!mod || typeof mod !== 'object' || isI18nProxy(mod)) return false;
+      if (!isValidModule(mod)) return false;
       return props.every((p) => p in mod);
     });
   }
 
-  DS.isI18nProxy = isI18nProxy;
   DS.getWebpackRequire = getWebpackRequire;
   DS.findModule = findModule;
   DS.findModuleByProps = findModuleByProps;

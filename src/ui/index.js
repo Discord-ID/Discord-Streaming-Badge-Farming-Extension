@@ -19,12 +19,11 @@
     styleEl.textContent = DS.uiStyles || '';
     shadowRoot.appendChild(styleEl);
 
-    const widgetHtml = typeof DS.renderWidgetHtml === 'function' ? DS.renderWidgetHtml() : '';
     const modalHtml = typeof DS.renderModalHtml === 'function' ? DS.renderModalHtml() : '';
     const checkerHtml = typeof DS.renderCheckerModalHtml === 'function' ? DS.renderCheckerModalHtml() : '';
 
     const container = document.createElement('div');
-    container.innerHTML = `${widgetHtml}${modalHtml}${checkerHtml}`;
+    container.innerHTML = `${modalHtml}${checkerHtml}`;
     shadowRoot.appendChild(container);
 
     wireUiEvents(shadowRoot);
@@ -32,7 +31,6 @@
   }
 
   function wireUiEvents(root) {
-    const trigger = root.getElementById('discordIdTrigger');
     const overlay = root.getElementById('discordIdOverlay');
     const closeBtn = root.getElementById('modalCloseBtn');
     const checkerOverlay = root.getElementById('discordCheckerOverlay');
@@ -47,13 +45,17 @@
       const durationEl = root.getElementById('settingDuration');
       const cooldownEl = root.getElementById('settingCooldown');
       const reconnectDelayEl = root.getElementById('settingReconnectDelay');
+      const qualityEl = root.getElementById('settingStreamQuality');
+      const fpsEl = root.getElementById('settingStreamFps');
 
       if (autoJoinEl) autoJoinEl.checked = Boolean(config.autoJoin);
       if (autoStreamEl) autoStreamEl.checked = Boolean(config.autoStream);
       if (autoReconnectEl) autoReconnectEl.checked = Boolean(config.autoReconnect);
-      if (durationEl) durationEl.value = String(config.streamDurationHours || 10);
+      if (durationEl) durationEl.value = String(config.streamDurationHours || 6);
       if (cooldownEl) cooldownEl.value = String(config.cooldownMinutes || 5);
       if (reconnectDelayEl) reconnectDelayEl.value = String(config.reconnectDelayMinutes || 1);
+      if (qualityEl) qualityEl.value = config.streamQuality || '480p';
+      if (fpsEl) fpsEl.value = String(config.streamFps || 30);
 
       const channels = config.targetChannelIds || [];
       const access = typeof DS.checkDiscordIdAccess === 'function'
@@ -75,7 +77,9 @@
       overlay?.classList.remove('open');
     };
 
-    trigger?.addEventListener('click', openModal);
+    root._openModal = openModal;
+    root._closeModal = closeModal;
+
     closeBtn?.addEventListener('click', closeModal);
 
     overlay?.addEventListener('click', (e) => {
@@ -212,6 +216,37 @@
       }
     });
 
+    const qualitySelect = root.getElementById('settingStreamQuality');
+    const fpsSelect = root.getElementById('settingStreamFps');
+
+    qualitySelect?.addEventListener('change', () => {
+      const val = qualitySelect.value;
+      if (val) {
+        if (typeof DS.saveConfig === 'function') DS.saveConfig({ streamQuality: val });
+        const curFps = fpsSelect?.value || '30';
+        const qualityVal = root.getElementById('statusQualityValue');
+        if (qualityVal) qualityVal.textContent = `${val} • ${curFps} FPS`;
+        const video = document.getElementById('virtualScreenPlayer');
+        if (typeof DS.installDisplayMediaHook === 'function' && video && typeof DS.createMuxedStream === 'function') {
+          DS.installDisplayMediaHook(() => DS.createMuxedStream(video, val, parseInt(curFps, 10)));
+        }
+      }
+    });
+
+    fpsSelect?.addEventListener('change', () => {
+      const fpsVal = parseInt(fpsSelect.value, 10);
+      if (!isNaN(fpsVal)) {
+        if (typeof DS.saveConfig === 'function') DS.saveConfig({ streamFps: fpsVal });
+        const curQuality = qualitySelect?.value || '480p';
+        const qualityVal = root.getElementById('statusQualityValue');
+        if (qualityVal) qualityVal.textContent = `${curQuality} • ${fpsVal} FPS`;
+        const video = document.getElementById('virtualScreenPlayer');
+        if (typeof DS.installDisplayMediaHook === 'function' && video && typeof DS.createMuxedStream === 'function') {
+          DS.installDisplayMediaHook(() => DS.createMuxedStream(video, curQuality, fpsVal));
+        }
+      }
+    });
+
     const btnRestart = root.getElementById('btnRestartStream');
     btnRestart?.addEventListener('click', () => {
       console.log('[Discord Indonesia] Reloading Discord website and restarting extension...');
@@ -267,16 +302,15 @@
     const isVerified = access.canStream;
 
     const checkerOverlay = root.getElementById('discordCheckerOverlay');
-    const trigger = root.getElementById('discordIdTrigger');
 
-    if (!isVerified) {
-      if (!checkerDismissed) {
-        checkerOverlay?.classList.add('open');
-      }
-      trigger?.classList.add('gated');
-    } else {
-      checkerOverlay?.classList.remove('open');
-      trigger?.classList.remove('gated');
+    if (checkerOverlay?.classList.contains('open')) {
+      updateCheckerDialogStatus(root, access);
+    }
+
+    if (isVerified && checkerOverlay?.classList.contains('open')) {
+      checkerOverlay.classList.remove('open');
+      const openModalFn = root._openModal;
+      if (typeof openModalFn === 'function') openModalFn();
     }
 
     const btnRestart = root.getElementById('btnRestartStream');
@@ -339,19 +373,12 @@
         statusValue.textContent = !access.isMember ? 'Locked (Join Server First)' : 'Locked (Channels Missing)';
       } else if (sessionStats.phase === 'reconnecting') {
         statusValue.textContent = 'Reconnecting Voice...';
-        trigger?.classList.remove('idle');
-        trigger?.classList.add('cooldown');
       } else if (streaming) {
         statusValue.textContent = 'Live Streaming';
-        trigger?.classList.remove('idle', 'cooldown');
       } else if (cycling) {
         statusValue.textContent = 'Standby / Cooldown';
-        trigger?.classList.remove('idle');
-        trigger?.classList.add('cooldown');
       } else {
         statusValue.textContent = 'Idle';
-        trigger?.classList.remove('cooldown');
-        trigger?.classList.add('idle');
       }
     }
 
@@ -360,7 +387,7 @@
     const statCooldown = root.getElementById('statCooldownValue');
 
     if (statTarget) {
-      statTarget.textContent = `${config.streamDurationHours || 10}h`;
+      statTarget.textContent = `${config.streamDurationHours || 6}h`;
     }
 
     if (statDuration) {
@@ -438,6 +465,68 @@
       refreshModalValues(root).catch(() => {});
     }, 1000);
   }
+
+  function setVerifyItem(element, pass, readyText = 'Ready', pendingText = 'Required') {
+    if (!element) return;
+    element.className = `verify-item ${pass ? 'pass' : 'fail'}`;
+    const state = element.querySelector('.verify-item-state');
+    if (state) {
+      state.textContent = pass ? readyText : pendingText;
+    }
+  }
+
+  function updateCheckerDialogStatus(root, access) {
+    if (!root) return;
+    const itemAuth = root.getElementById('verifyItemAuth');
+    const itemMember = root.getElementById('verifyItemMember');
+    const itemVoice = root.getElementById('verifyItemVoice');
+    const itemPerm = root.getElementById('verifyItemPerm');
+
+    const isLoginOk = access?.statusText !== 'Please Login to Discord';
+    setVerifyItem(itemAuth, isLoginOk, 'Ready', 'Disconnected');
+    setVerifyItem(itemMember, Boolean(access?.isMember), 'Joined', 'Required');
+    setVerifyItem(itemVoice, Boolean(access?.voiceFound), 'Available', 'Pending');
+    setVerifyItem(itemPerm, Boolean(access?.canStream || (access?.isMember && access?.voiceFound)), 'Available', 'Pending');
+  }
+
+  window.addEventListener('message', async (event) => {
+    if (event.source !== window || event.origin !== window.location.origin) return;
+    if (event.data?.source !== 'discord-extension-isolated') return;
+
+    const { type } = event.data;
+    if (type !== 'DISCORD_EXTENSION_TOGGLE_PANEL') return;
+
+    const config = typeof DS.loadConfig === 'function' ? DS.loadConfig() : {};
+    const channels = config.targetChannelIds || [];
+
+    try {
+      const overlay = shadowRoot?.getElementById('discordIdOverlay');
+      const checkerOverlay = shadowRoot?.getElementById('discordCheckerOverlay');
+      const access = typeof DS.checkDiscordIdAccess === 'function'
+        ? await DS.checkDiscordIdAccess(config.guildId || undefined, channels, true)
+        : { canStream: true };
+
+      if (!access.canStream) {
+        if (overlay?.classList.contains('open')) overlay.classList.remove('open');
+        checkerOverlay?.classList.toggle('open');
+        updateCheckerDialogStatus(shadowRoot, access);
+      } else {
+        if (checkerOverlay?.classList.contains('open')) checkerOverlay.classList.remove('open');
+        if (overlay?.classList.contains('open')) {
+          overlay.classList.remove('open');
+        } else {
+          const openModalFn = shadowRoot?._openModal;
+          if (typeof openModalFn === 'function') {
+            openModalFn();
+          } else {
+            overlay?.classList.add('open');
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[Discord Indonesia] Toggle panel error:', err);
+    }
+  });
 
   DS.initUI = initUI;
 })();

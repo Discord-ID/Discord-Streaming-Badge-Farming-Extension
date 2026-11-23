@@ -37,14 +37,19 @@
 
   function getRTCConnectionStore() {
     return DS.findModule((mod) => {
-      return isFluxStore(mod) && typeof mod?.isConnected === 'function';
+      return (
+        isFluxStore(mod) &&
+        typeof mod?.isConnected === 'function' &&
+        typeof mod?.getState === 'function'
+      );
     });
   }
 
   function getVoiceStateStore() {
-    return DS.findModule((mod) => {
-      return isFluxStore(mod) && typeof mod?.getVoiceStatesForChannel === 'function';
-    });
+    return (
+      DS.findModule((mod) => typeof mod?.getVoiceStatesForChannel === 'function' && typeof mod?.getVideoVoiceStatesForChannel === 'function') ||
+      DS.findModule((mod) => isFluxStore(mod) && typeof mod?.getVoiceStatesForChannel === 'function')
+    );
   }
 
   function getGuildStore() {
@@ -54,19 +59,56 @@
   }
 
   function getChannelStore() {
-    return DS.findModule((mod) => {
-      return isFluxStore(mod) && typeof mod?.getChannel === 'function';
-    });
+    return (
+      DS.findModule((mod) => typeof mod?.loadAllGuildAndPrivateChannelsFromDisk === 'function' && typeof mod?.getChannel === 'function') ||
+      DS.findModule((mod) => isFluxStore(mod) && typeof mod?.getChannel === 'function' && typeof mod?.getMutableGuildChannelsForGuild === 'function') ||
+      DS.findModule((mod) => isFluxStore(mod) && typeof mod?.getChannel === 'function' && typeof mod?.hasChannel === 'function') ||
+      DS.findModule((mod) => isFluxStore(mod) && typeof mod?.getChannel === 'function')
+    );
   }
 
   function getApplicationStreamStore() {
     return DS.findModule((mod) => {
       return (
         isFluxStore(mod) &&
-        (typeof mod?.getCurrentUserActiveStream === 'function' ||
-          typeof mod?.isSelfStreaming === 'function')
+        typeof mod?.getCurrentUserActiveStream === 'function'
       );
     });
+  }
+
+  function getPermissionStore() {
+    return (
+      DS.findModule((mod) => isFluxStore(mod) && typeof mod?.can === 'function') ||
+      DS.findModuleByProps('can', 'getChannelPermissions')
+    );
+  }
+
+  function getVoiceActions() {
+    return (
+      DS.findModuleByProps('selectVoiceChannel') ||
+      DS.findModule((mod) => mod && typeof mod?.selectVoiceChannel === 'function')
+    );
+  }
+
+  function getStreamActions() {
+    return (
+      DS.findModuleByProps('startStream', 'stopStream') ||
+      DS.findModuleByProps('setGoLiveSource', 'stopStream') ||
+      DS.findModule((mod) => mod && typeof mod?.startStream === 'function')
+    );
+  }
+
+  function getMediaEngineStore() {
+    return DS.findModule((mod) => {
+      return isFluxStore(mod) && typeof mod?.getMediaEngine === 'function';
+    });
+  }
+
+  function getStreamActionCreators() {
+    return (
+      DS.findModuleByProps('XI', 'Xd') ||
+      DS.findModule((mod) => mod && typeof mod?.XI === 'function' && typeof mod?.Xd === 'function')
+    );
   }
 
   DS.getUserStore = getUserStore;
@@ -77,4 +119,9 @@
   DS.getGuildStore = getGuildStore;
   DS.getChannelStore = getChannelStore;
   DS.getApplicationStreamStore = getApplicationStreamStore;
+  DS.getPermissionStore = getPermissionStore;
+  DS.getMediaEngineStore = getMediaEngineStore;
+  DS.getStreamActionCreators = getStreamActionCreators;
+  DS.getVoiceActions = getVoiceActions;
+  DS.getStreamActions = getStreamActions;
 })();

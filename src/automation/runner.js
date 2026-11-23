@@ -13,7 +13,7 @@
   let currentStreamDurationMs = 10 * 3600 * 1000;
   let currentCooldownDurationMs = 5 * 60 * 1000;
   let currentReconnectDurationMs = 1 * 60 * 1000;
-  let currentConfiguredHours = 10;
+  let currentConfiguredHours = 6;
   let currentConfiguredCooldownMinutes = 5;
   let currentConfiguredReconnectMinutes = 1;
 
@@ -23,10 +23,6 @@
       activeChannelId = channelId;
       console.log(`[Discord Indonesia] Pinned session voice channel: ${channelId}`);
     }
-  }
-
-  function getSessionChannelId() {
-    return sessionPinnedChannelId;
   }
 
   async function reconnectVoice(guildId, candidates) {
@@ -49,7 +45,7 @@
 
   function syncRunnerConfig() {
     const cfg = typeof DS.loadConfig === 'function' ? DS.loadConfig() : {};
-    currentConfiguredHours = cfg.streamDurationHours || 10;
+    currentConfiguredHours = cfg.streamDurationHours || 6;
     currentConfiguredCooldownMinutes = cfg.cooldownMinutes || 5;
     currentConfiguredReconnectMinutes = cfg.reconnectDelayMinutes || 1;
     currentStreamDurationMs = currentConfiguredHours * 3600 * 1000;
@@ -120,25 +116,18 @@
     const candidates =
       liveConfig.targetChannelIds && liveConfig.targetChannelIds.length > 0
         ? liveConfig.targetChannelIds
-        : [liveConfig.channelId];
+        : (liveConfig.channelId ? [liveConfig.channelId] : []);
 
     let access = typeof DS.checkDiscordIdAccess === 'function'
       ? await DS.checkDiscordIdAccess(liveConfig.guildId || undefined, candidates)
       : { canStream: true };
 
     if (!access.canStream) {
-      console.warn(`[Discord Indonesia] Gated: ${access.statusText}. Join Discord ID to activate streaming.`);
-      while (!access.canStream) {
-        await sleep(4000);
-        if (typeof DS.checkDiscordIdAccess === 'function') {
-          access = await DS.checkDiscordIdAccess(DS.loadConfig().guildId || undefined, candidates, true);
-        }
-      }
-      console.log('[Discord Indonesia] Discord ID access confirmed! Unlocking streaming features...');
+      console.warn(`[Discord Indonesia] Warning: ${access.statusText}`);
     }
 
     activeChannelId = sessionPinnedChannelId || candidates[0];
-    if (DS.loadConfig().autoJoin) {
+    if (DS.loadConfig().autoJoin && candidates.length > 0) {
       const joined = await reconnectVoice(DS.loadConfig().guildId, candidates);
 
       if (!joined) {
@@ -311,7 +300,6 @@
   }
 
   DS.setSessionChannelId = setSessionChannelId;
-  DS.getSessionChannelId = getSessionChannelId;
   DS.syncRunnerConfig = syncRunnerConfig;
   DS.getStreamSessionStats = getStreamSessionStats;
   DS.stopStreamCycle = stopStreamCycle;

@@ -18,7 +18,7 @@
       return;
     }
 
-    if (typeof navigator.mediaDevices.getDisplayMedia === 'function') {
+    if (!originalGetDisplayMedia && typeof navigator.mediaDevices.getDisplayMedia === 'function') {
       originalGetDisplayMedia = navigator.mediaDevices.getDisplayMedia.bind(navigator.mediaDevices);
     }
 
@@ -53,15 +53,5 @@
     console.log('[Discord Indonesia] Universal display media polyfill active');
   }
 
-  function restoreDisplayMediaHook() {
-    if (originalGetDisplayMedia && navigator.mediaDevices) {
-      navigator.mediaDevices.getDisplayMedia = originalGetDisplayMedia;
-      originalGetDisplayMedia = null;
-      activeStreamProvider = null;
-      console.log('[Discord Indonesia] Display media hook restored');
-    }
-  }
-
   DS.installDisplayMediaHook = installDisplayMediaHook;
-  DS.restoreDisplayMediaHook = restoreDisplayMediaHook;
 })();

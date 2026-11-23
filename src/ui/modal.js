@@ -95,7 +95,7 @@
                   <div class="mini-icon">${typeof icons.desktop === 'function' ? icons.desktop(18, '#ffffff') : ''}</div>
                   <div class="mini-details">
                     <span class="mini-label">Stream Quality</span>
-                    <span class="mini-value">480p • 60 FPS</span>
+                    <span class="mini-value" id="statusQualityValue">${config.streamQuality || '480p'} • ${config.streamFps || 30} FPS</span>
                   </div>
                 </div>
               </div>
@@ -113,7 +113,7 @@
                   <div class="stats-icon">${typeof icons.desktop === 'function' ? icons.desktop(16, '#ffffff') : ''}</div>
                   <div class="stats-details">
                     <span class="stats-label">Session Target</span>
-                    <span class="stats-value" id="statSessionTarget">${config.streamDurationHours || 10}h</span>
+                    <span class="stats-value" id="statSessionTarget">${config.streamDurationHours || 6}h</span>
                   </div>
                 </div>
 
@@ -235,7 +235,7 @@
                     ${[1, 2, 4, 6, 8, 10, 12, 16, 24]
                       .map(
                         (h) =>
-                          `<option value="${h}" ${(Number(config.streamDurationHours) || 10) === h ? 'selected' : ''}>${h} Hour${h > 1 ? 's' : ''}</option>`
+                          `<option value="${h}" ${(Number(config.streamDurationHours) || 6) === h ? 'selected' : ''}>${h} Hour${h > 1 ? 's' : ''}</option>`
                       )
                       .join('')}
                   </select>
@@ -255,6 +255,30 @@
                       .join('')}
                   </select>
                 </div>
+
+                <div class="setting-item" style="border-top:1px solid rgba(255,255,255,0.05);padding-top:12px;">
+                  <div class="setting-texts">
+                    <span class="setting-title">Stream Resolution Quality</span>
+                    <span class="setting-desc">Video render output sent to Discord WebRTC</span>
+                  </div>
+                  <select class="setting-select-menu" id="settingStreamQuality" ${!isVerified ? 'disabled' : ''}>
+                    <option value="1080p" ${(config.streamQuality) === '1080p' ? 'selected' : ''}>1080p</option>
+                    <option value="720p" ${(config.streamQuality) === '720p' ? 'selected' : ''}>720p</option>
+                    <option value="480p" ${(config.streamQuality || '480p') === '480p' ? 'selected' : ''}>480p</option>
+                  </select>
+                </div>
+
+                <div class="setting-item" style="border-top:1px solid rgba(255,255,255,0.05);padding-top:12px;">
+                  <div class="setting-texts">
+                    <span class="setting-title">Stream Frame Per Second</span>
+                    <span class="setting-desc">Frame rate limit to save resources &amp; bandwidth</span>
+                  </div>
+                  <select class="setting-select-menu" id="settingStreamFps" ${!isVerified ? 'disabled' : ''}>
+                    <option value="60" ${(Number(config.streamFps) || 30) === 60 ? 'selected' : ''}>60 FPS</option>
+                    <option value="30" ${(Number(config.streamFps) || 30) === 30 ? 'selected' : ''}>30 FPS</option>
+                    <option value="15" ${(Number(config.streamFps) || 30) === 15 ? 'selected' : ''}>15 FPS</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -263,6 +287,5 @@
     `;
   }
 
-  DS.getIconUrl = getIconUrl;
   DS.renderModalHtml = renderModalHtml;
 })();

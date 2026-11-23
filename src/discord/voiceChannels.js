@@ -1,16 +1,8 @@
 (() => {
   const DS = (window.DiscordStreamer = window.DiscordStreamer || {});
 
-  const defaultChannelNames = {
-    '1532531180229103626': '🐝・Badge Farming I',
-    '1562379518864269382': '🐝・Badge Farming II',
-    '1562514091589898250': '🐝・Badge Farming III',
-  };
-
   function getVoiceChannelName(channelId) {
-    if (defaultChannelNames[channelId]) {
-      return defaultChannelNames[channelId];
-    }
+    if (!channelId) return 'Voice Channel';
 
     const channelStore = typeof DS.getChannelStore === 'function' ? DS.getChannelStore() : null;
     const channel = channelStore?.getChannel(channelId);
@@ -18,15 +10,7 @@
       return channel.name.split('/')[0].split('|')[0].trim();
     }
 
-    const channelAnchor = document.querySelector(`a[href*="${channelId}"]`);
-    if (channelAnchor) {
-      const nameEl = channelAnchor.querySelector('[class*="name_"], [class*="channelName"]');
-      if (nameEl && nameEl.textContent) {
-        return nameEl.textContent.split('/')[0].split('|')[0].trim();
-      }
-    }
-
-    return `Voice Channel (${channelId.slice(-4)})`;
+    return `Voice Channel (${String(channelId).slice(-4)})`;
   }
 
   function isVoiceChannelFull(channelId, currentCount) {
@@ -54,21 +38,6 @@
         }
       } catch {}
     }
-
-    try {
-      const channelAnchor = document.querySelector(`a[href*="${channelId}"]`);
-      if (channelAnchor) {
-        const channelItem =
-          channelAnchor.closest('[class*="wrapper__"], [class*="containerDefault"]') ||
-          channelAnchor.parentElement;
-        const userList = channelItem?.parentElement?.querySelectorAll(
-          '[class*="voiceUser__"], [class*="userAvatar__"], [class*="avatarContainer__"]'
-        );
-        if (userList && userList.length > 0) {
-          return userList.length;
-        }
-      }
-    } catch {}
 
     return 0;
   }

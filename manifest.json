@@ -9,9 +9,19 @@
     "128": "assets/icon.png"
   },
   "permissions": [
-    "storage",
     "declarativeNetRequest"
   ],
+  "action": {
+    "default_icon": {
+      "16": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    },
+    "default_title": "Discord Streaming Badge Farming"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "declarative_net_request": {
     "rule_resources": [
       {
@@ -29,9 +39,9 @@
   "content_scripts": [
     {
       "matches": [
-        "https://discord.com/channels/*",
-        "https://canary.discord.com/channels/*",
-        "https://ptb.discord.com/channels/*"
+        "https://discord.com/*",
+        "https://canary.discord.com/*",
+        "https://ptb.discord.com/*"
       ],
       "js": [
         "bridge.js"
@@ -40,9 +50,9 @@
     },
     {
       "matches": [
-        "https://discord.com/channels/*",
-        "https://canary.discord.com/channels/*",
-        "https://ptb.discord.com/channels/*"
+        "https://discord.com/*",
+        "https://canary.discord.com/*",
+        "https://ptb.discord.com/*"
       ],
       "js": [
         "src/constants/dispatches.js",
@@ -64,7 +74,6 @@
         "src/automation/runner.js",
         "src/ui/icons.js",
         "src/ui/styles.js",
-        "src/ui/widget.js",
         "src/ui/checkerModal.js",
         "src/ui/modal.js",
         "src/ui/index.js",

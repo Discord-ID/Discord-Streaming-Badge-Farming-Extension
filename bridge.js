@@ -1,16 +1,5 @@
 (function () {
   'use strict';
-  try {
-    if (typeof Boolean.prototype.includes !== 'function') {
-      Object.defineProperty(Boolean.prototype, 'includes', {
-        value: function () {
-          return false;
-        },
-        writable: true,
-        configurable: true,
-      });
-    }
-  } catch {}
 
   try {
     const videoUrl = chrome.runtime.getURL('assets/videostream.mp4');
@@ -42,4 +31,16 @@
       configurable: true,
     });
   } catch {}
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type === 'DISCORD_EXTENSION_TOGGLE_PANEL') {
+      window.postMessage(
+        {
+          source: 'discord-extension-isolated',
+          type: 'DISCORD_EXTENSION_TOGGLE_PANEL',
+        },
+        window.location.origin
+      );
+    }
+  });
 })();

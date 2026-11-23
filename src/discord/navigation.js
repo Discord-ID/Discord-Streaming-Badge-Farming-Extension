@@ -18,11 +18,6 @@
         }
       } catch {}
     }
-
-    const channelLink = document.querySelector(`a[href*="${channelId}"]`);
-    if (channelLink) {
-      channelLink.click();
-    }
   }
 
   DS.navigateToVoiceChannel = navigateToVoiceChannel;
