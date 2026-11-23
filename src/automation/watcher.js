@@ -11,13 +11,7 @@
     }
 
     const rtcStore = typeof DS.getRTCConnectionStore === 'function' ? DS.getRTCConnectionStore() : null;
-    const isRtcConnected = rtcStore?.getState?.() === 'RTC_CONNECTED' || rtcStore?.isConnected?.() === true;
-    if (isRtcConnected) {
-      return true;
-    }
-
-    const disconnectBtn = document.querySelector('button[aria-label*="Disconnect" i]');
-    return Boolean(disconnectBtn);
+    return rtcStore?.getState?.() === 'RTC_CONNECTED' || rtcStore?.isConnected?.() === true;
   }
 
   async function waitForClientReady(timeoutMs = 60000) {
@@ -63,7 +57,7 @@
       const sessionId = authStore?.getSessionId();
 
       if (userId && sessionId) {
-        console.log(`[Discord Indonesia] Client and Gateway ready: ${username} (${userId}) | Session: ${sessionId}`);
+        console.log(`[Discord Indonesia] Client and Gateway ready: ${username} (${userId})`);
         return true;
       }
 

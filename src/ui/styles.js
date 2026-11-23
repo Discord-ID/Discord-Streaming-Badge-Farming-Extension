@@ -29,7 +29,6 @@ a {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Sleek Dark Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -49,69 +48,6 @@ a {
   background: rgba(255, 255, 255, 0.32);
 }
 
-/* Minimalist Floating Trigger Widget (46x46 Squircle on Right Edge) */
-.discord-id-trigger {
-  position: fixed;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2147483640;
-  width: 46px;
-  height: 46px;
-  background-color: #1e1f22;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(138, 30, 37, 0.25);
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-  user-select: none;
-}
-
-.discord-id-trigger:hover {
-  background-color: #2b2d31;
-  border-color: #8a1e25;
-  transform: translateY(-50%) scale(1.08);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 16px rgba(138, 30, 37, 0.4);
-}
-
-.discord-id-trigger .trigger-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-}
-
-.discord-id-trigger .status-dot {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #23a55a;
-  border: 2px solid #1e1f22;
-  box-shadow: 0 0 6px #23a55a;
-}
-
-.discord-id-trigger.idle .status-dot {
-  background-color: #f23f43;
-  box-shadow: 0 0 6px #f23f43;
-}
-
-.discord-id-trigger.cooldown .status-dot {
-  background-color: #f0b232;
-  box-shadow: 0 0 6px #f0b232;
-}
-
-.discord-id-trigger.gated .status-dot {
-  background-color: #eab308;
-  box-shadow: 0 0 6px #eab308;
-}
-
-/* Modal Overlay (Dark Backdrop) */
 .discord-id-overlay {
   position: fixed;
   inset: 0;
@@ -132,7 +68,6 @@ a {
   pointer-events: auto;
 }
 
-/* Wide Desktop Modal Window (860px x 560px Roblox Executor / Discord Native Style) */
 .discord-id-modal {
   position: relative;
   width: 860px;
@@ -154,7 +89,6 @@ a {
   transform: scale(1) translateY(0);
 }
 
-/* Close Button (Top Right) */
 .modal-close-btn {
   position: absolute;
   top: 14px;
@@ -179,7 +113,6 @@ a {
   border-color: #ffffff;
 }
 
-/* Sidebar Left Panel (Width: 230px) */
 .modal-sidebar {
   width: 230px;
   background-color: #2b2d31;
@@ -203,13 +136,12 @@ a {
   width: 36px;
   height: 36px;
   background-color: #8a1e25;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(138, 30, 37, 0.4);
 }
 
 .sidebar-logo-img {
@@ -241,7 +173,6 @@ a {
   letter-spacing: 0.02em;
 }
 
-/* Nav Tabs */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -282,7 +213,6 @@ a {
   color: #949ba4;
 }
 
-/* Sidebar Footer: Join Discord ID Link Button */
 .sidebar-footer {
   margin-top: auto;
   padding-top: 14px;
@@ -336,7 +266,6 @@ a {
   color: #949ba4;
 }
 
-/* Main Content Area (Right Panel) */
 .modal-content-area {
   flex: 1;
   display: flex;
@@ -372,7 +301,6 @@ a {
   margin: 0 0 10px 0;
 }
 
-/* Cards (Executor Surface Style) */
 .content-card {
   background-color: #2b2d31;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -439,7 +367,6 @@ a {
   color: #ffffff;
 }
 
-/* Stats 3-Column Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -494,7 +421,6 @@ a {
   text-overflow: ellipsis;
 }
 
-/* Channel Balancer List */
 .channel-item {
   display: flex;
   align-items: center;
@@ -551,12 +477,10 @@ a {
 
 .channel-live-dot.dot-green {
   background-color: #23a55a;
-  box-shadow: 0 0 6px #23a55a;
 }
 
 .channel-live-dot.dot-red {
   background-color: #f23f43;
-  box-shadow: 0 0 6px #f23f43;
 }
 
 .channel-join-btn {
@@ -569,7 +493,7 @@ a {
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
   user-select: none;
   background-color: #8a1e25;
   color: #ffffff;
@@ -577,7 +501,6 @@ a {
 
 .channel-join-btn:hover:not(:disabled):not(.active) {
   background-color: #71171d;
-  box-shadow: 0 2px 8px rgba(138, 30, 37, 0.4);
 }
 
 .channel-join-btn.active {
@@ -597,7 +520,6 @@ a {
   pointer-events: none;
 }
 
-/* Action Buttons Bar */
 .action-buttons-row {
   display: flex;
   gap: 12px;
@@ -615,7 +537,7 @@ a {
   border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
   user-select: none;
 }
 
@@ -626,17 +548,14 @@ a {
 
 .btn-primary-red:hover {
   background-color: #71171d;
-  box-shadow: 0 4px 12px rgba(138, 30, 37, 0.4);
 }
 
 .btn:disabled, .btn.disabled {
   opacity: 0.4 !important;
   cursor: not-allowed !important;
   pointer-events: none !important;
-  filter: grayscale(0.6);
 }
 
-/* Settings Switch Rows */
 .setting-item {
   display: flex;
   align-items: center;
@@ -690,7 +609,6 @@ a {
   cursor: not-allowed;
 }
 
-/* Discord Native Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -738,7 +656,6 @@ a {
   pointer-events: none;
 }
 
-/* Discord Native Checker / Consent Modal (440px Alert Style) */
 .discord-checker-overlay {
   position: fixed;
   inset: 0;
@@ -825,8 +742,7 @@ a {
   object-fit: contain;
   user-select: none;
   pointer-events: none;
-  border-radius: 16px;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.55));
+  border-radius: 12px;
 }
 
 .discord-checker-title {
@@ -910,13 +826,92 @@ a {
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 2px 6px rgba(138, 30, 37, 0.4);
+  transition: background-color 0.15s ease;
 }
 
 .btn-checker-primary:hover {
   background-color: #71171d;
-  box-shadow: 0 4px 12px rgba(138, 30, 37, 0.5);
+}
+
+.checker-verify-card {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.24);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: left;
+}
+
+.verify-item {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #dbdee1;
+  line-height: 1.4;
+}
+
+.verify-item-bullet {
+  color: #80848e;
+  font-size: 16px;
+  margin-right: 8px;
+  line-height: 1;
+}
+
+.verify-item-text {
+  flex: 1;
+  font-weight: 500;
+}
+
+.verify-item-state {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-left: auto;
+}
+
+.verify-item.pass .verify-item-bullet {
+  color: #57f287;
+}
+
+.verify-item.pass .verify-item-state {
+  color: #57f287;
+  opacity: 0.9;
+}
+
+.verify-item.fail .verify-item-bullet {
+  color: #80848e;
+}
+
+.verify-item.fail .verify-item-state {
+  color: #949ba4;
+  opacity: 0.8;
+}
+
+.btn-checker-verify {
+  flex: 1.4;
+  height: 42px;
+  background-color: #5865f2;
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(88, 101, 242, 0.4);
+}
+
+.btn-checker-verify:hover {
+  background-color: #4752c4;
+  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.6);
 }
 `;
 })();

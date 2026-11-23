@@ -17,3 +17,6 @@ Desktop.ini
 *.tmp
 *.temp
 *~
+*.log
+.env
+.env.*

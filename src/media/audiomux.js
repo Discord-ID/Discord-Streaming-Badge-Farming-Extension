@@ -1,29 +1,67 @@
 (() => {
   const DS = (window.DiscordStreamer = window.DiscordStreamer || {});
 
-  function createMuxedStream(videoElement) {
-    const captureMethod = videoElement.captureStream || videoElement.mozCaptureStream;
+  let activeAnimId = null;
 
-    if (!captureMethod) {
-      throw new Error('[Discord Indonesia] captureStream unsupported');
+  function createMuxedStream(videoElement, targetQuality, targetFps) {
+    const config = typeof DS.loadConfig === 'function' ? DS.loadConfig() : {};
+    const quality = targetQuality || config.streamQuality || '480p';
+    const fps = targetFps || config.streamFps || DS.mediaSettings?.fps || 30;
+
+    let videoTrack = null;
+    let rawAudioTrack = null;
+
+    if (quality === '480p' || quality === '720p') {
+      const targetWidth = quality === '480p' ? 854 : 1280;
+      const targetHeight = quality === '480p' ? 480 : 720;
+
+      let canvas = document.getElementById('virtualScreenCanvas');
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'virtualScreenCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.bottom = '0';
+        canvas.style.right = '0';
+        canvas.style.opacity = '0.001';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '-999999';
+        document.body.appendChild(canvas);
+      }
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext('2d', { alpha: false });
+
+      if (activeAnimId) cancelAnimationFrame(activeAnimId);
+      const render = () => {
+        if (videoElement && !videoElement.paused && !videoElement.ended) {
+          ctx.drawImage(videoElement, 0, 0, targetWidth, targetHeight);
+        }
+        activeAnimId = requestAnimationFrame(render);
+      };
+      render();
+
+      const canvasStream = canvas.captureStream ? canvas.captureStream(fps) : canvas.mozCaptureStream(fps);
+      videoTrack = canvasStream?.getVideoTracks?.()[0];
+    } else {
+      const captureMethod = videoElement.captureStream || videoElement.mozCaptureStream;
+      if (!captureMethod) {
+        throw new Error('[Discord Indonesia] captureStream unsupported');
+      }
+      const rawStream = captureMethod.call(videoElement, fps);
+      videoTrack = rawStream?.getVideoTracks?.()[0];
+      rawAudioTrack = rawStream?.getAudioTracks?.()[0];
     }
-
-    const fps = DS.mediaSettings?.fps || 60;
-    const rawStream = captureMethod.call(videoElement, fps);
-    const videoTrack = rawStream.getVideoTracks()[0];
 
     const muxedStream = new MediaStream();
     if (videoTrack) {
-      const origApply = typeof videoTrack.applyConstraints === 'function' ? videoTrack.applyConstraints.bind(videoTrack) : null;
-      videoTrack.applyConstraints = async function (constraints) {
+      const origApply = videoTrack.applyConstraints?.bind(videoTrack);
+      videoTrack.applyConstraints = async (c) => {
         try {
-          if (origApply) {
-            await origApply(constraints);
-          }
-        } catch {}
-        return Promise.resolve();
+          if (origApply) return await origApply(c);
+        } catch {
+          return Promise.resolve();
+        }
       };
-
       muxedStream.addTrack(videoTrack);
     }
 
@@ -40,11 +78,13 @@
       if (audioTrack) {
         muxedStream.addTrack(audioTrack);
       }
-    } catch (err) {
-      console.warn('[Discord Indonesia] WebAudio routing failed, using native audio track:', err);
-      const directAudioTrack = rawStream.getAudioTracks()[0];
-      if (directAudioTrack) {
-        muxedStream.addTrack(directAudioTrack);
+    } catch {
+      if (!rawAudioTrack && (videoElement.captureStream || videoElement.mozCaptureStream)) {
+        const raw = (videoElement.captureStream || videoElement.mozCaptureStream).call(videoElement, fps);
+        rawAudioTrack = raw?.getAudioTracks?.()[0];
+      }
+      if (rawAudioTrack) {
+        muxedStream.addTrack(rawAudioTrack);
       }
     }
 

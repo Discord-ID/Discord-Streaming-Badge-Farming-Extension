@@ -28,30 +28,53 @@
 
           <div class="discord-checker-header">
             <div class="discord-checker-badge-wrapper">
-              <img class="discord-checker-badge-img" src="${badgeUrl}" alt="Discord ID Badge" draggable="false" />
+              <img class="discord-checker-badge-img" src="${badgeUrl}" alt="Discord Badge" draggable="false" />
             </div>
-            <h1 class="discord-checker-title" id="discord-checker-title">Join Discord Indonesia First</h1>
+            <h1 class="discord-checker-title" id="discord-checker-title">Discord Streaming Badge Extension</h1>
             <p class="discord-checker-subtitle">Badge Streaming Farming</p>
           </div>
 
           <div class="discord-checker-content">
             <p>
-              You must join the official <strong>Discord Indonesia</strong> server to activate voice streaming and badge farming.
+              Preparing your environment for automated badge farming.
             </p>
+
+            <div class="checker-verify-card">
+              <div class="verify-item pass" id="verifyItemAuth">
+                <span class="verify-item-bullet">•</span>
+                <span class="verify-item-text">Discord Client Connection</span>
+                <span class="verify-item-state">Ready</span>
+              </div>
+              <div class="verify-item fail" id="verifyItemMember">
+                <span class="verify-item-bullet">•</span>
+                <span class="verify-item-text">Discord Indonesia</span>
+                <span class="verify-item-state">Required</span>
+              </div>
+              <div class="verify-item fail" id="verifyItemVoice">
+                <span class="verify-item-bullet">•</span>
+                <span class="verify-item-text">Voice Streaming Channels</span>
+                <span class="verify-item-state">Pending</span>
+              </div>
+              <div class="verify-item fail" id="verifyItemPerm">
+                <span class="verify-item-bullet">•</span>
+                <span class="verify-item-text">Go Live Video Stream</span>
+                <span class="verify-item-state">Pending</span>
+              </div>
+            </div>
+
             <p class="discord-checker-hint">
-              If you have already joined or encounter connection issues, click <strong>Restart</strong> to reload your Discord session.
+              Join Discord Indonesia to unlock the farming panel automatically.
             </p>
           </div>
 
           <footer class="discord-checker-footer">
-            <button class="btn btn-checker-secondary" id="btnCheckerRestart" type="button">
+            <button class="btn btn-checker-secondary" id="btnCheckerRestart" type="button" title="Reload Discord Tab">
               <span>${typeof icons.refresh === 'function' ? icons.refresh(14) : ''}</span>
               <span>Restart</span>
             </button>
             <a href="${inviteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-checker-primary" id="btnCheckerJoin">
               <span>${typeof icons.discord === 'function' ? icons.discord(16, '#ffffff') : ''}</span>
-              <span>Join Discord ID</span>
-              <span>${typeof icons.externalLink === 'function' ? icons.externalLink(12) : ''}</span>
+              <span>Join Server</span>
             </a>
           </footer>
         </div>
@@ -59,6 +82,5 @@
     `;
   }
 
-  DS.getBadgeUrl = getBadgeUrl;
   DS.renderCheckerModalHtml = renderCheckerModalHtml;
 })();

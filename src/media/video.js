@@ -14,12 +14,13 @@
       video.muted = true;
 
       video.style.position = 'fixed';
-      video.style.top = '-9999px';
-      video.style.left = '-9999px';
-      video.style.width = '1px';
-      video.style.height = '1px';
-      video.style.opacity = '0';
+      video.style.bottom = '0';
+      video.style.right = '0';
+      video.style.width = '320px';
+      video.style.height = '180px';
+      video.style.opacity = '0.001';
       video.style.pointerEvents = 'none';
+      video.style.zIndex = '-999999';
 
       const mount = () => {
         const container = document.body || document.documentElement;
