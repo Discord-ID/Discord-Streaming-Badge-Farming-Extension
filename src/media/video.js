@@ -36,10 +36,16 @@
       }
     }
 
-    const resolvedUrl =
-      targetUrl ||
+    const currentAssetUrl =
+      (typeof DS.getAssetVideoUrl === 'function' ? DS.getAssetVideoUrl() : '') ||
       document.documentElement.dataset.discordVideoUrl ||
-      video.src;
+      '';
+
+    const isCustomUrl =
+      typeof targetUrl === 'string' &&
+      (targetUrl.startsWith('http://') || targetUrl.startsWith('https://') || targetUrl.startsWith('blob:'));
+
+    const resolvedUrl = isCustomUrl ? targetUrl : (currentAssetUrl || targetUrl || video.src);
 
     if (!resolvedUrl) {
       console.error('[Discord Indonesia] Video asset URL missing; check bridge.js or extension assets');

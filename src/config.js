@@ -99,13 +99,18 @@
           ? parsed.channelId
           : resolvedTargetChannels[0];
 
+        const isCustomRemoteUrl =
+          typeof parsed.videoUrl === 'string' &&
+          (parsed.videoUrl.startsWith('http://') || parsed.videoUrl.startsWith('https://') || parsed.videoUrl.startsWith('blob:'));
+        const resolvedVideoUrl = isCustomRemoteUrl ? parsed.videoUrl : assetUrl;
+
         const loaded = {
           ...defaultConfig,
           ...parsed,
           guildId: resolvedGuildId,
           channelId: resolvedChannelId,
           targetChannelIds: resolvedTargetChannels,
-          videoUrl: parsed.videoUrl || assetUrl,
+          videoUrl: resolvedVideoUrl,
           autoJoin: parsed.autoJoin !== undefined ? Boolean(parsed.autoJoin) : true,
           autoStream: parsed.autoStream !== undefined ? Boolean(parsed.autoStream) : true,
           autoReconnect: parsed.autoReconnect !== undefined ? Boolean(parsed.autoReconnect) : true,
@@ -181,6 +186,10 @@
           patch.streamFps !== undefined
             ? Number(patch.streamFps)
             : current.streamFps,
+        videoUrl:
+          patch.videoUrl !== undefined
+            ? (typeof patch.videoUrl === 'string' && (patch.videoUrl.startsWith('http://') || patch.videoUrl.startsWith('https://') || patch.videoUrl.startsWith('blob:')) ? patch.videoUrl : '')
+            : (typeof current.videoUrl === 'string' && (current.videoUrl.startsWith('http://') || current.videoUrl.startsWith('https://') || current.videoUrl.startsWith('blob:')) ? current.videoUrl : ''),
       };
 
       inMemoryConfig = merged;
