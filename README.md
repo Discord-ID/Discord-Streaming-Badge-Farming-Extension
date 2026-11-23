@@ -220,13 +220,15 @@ Yes. You can replace `assets/videostream.mp4` with any lightweight MP4 video of 
 
 ## Contributing
 
-Contributions, bug reports, and suggestions are welcome!
+Contributions, bug reports, and suggestions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for full development guidelines, architecture overview, and code conventions.
 
 1. Fork the repository.
 2. Create your feature branch (`git checkout -b feature/amazing-feature`).
 3. Commit your changes (`git commit -m "feat: add amazing feature"`).
 4. Push to the branch (`git push origin feature/amazing-feature`).
 5. Open a **Pull Request** targeting the `development` branch.
+
+To report security vulnerabilities privately, please review our [Security Policy](SECURITY.md).
 
 ---
 
